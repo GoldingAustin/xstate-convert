@@ -9,8 +9,14 @@ import { convert } from "./convert";
 import { interpret } from "xstate";
 
 const [state, actions, service] = convert(interpret(countMachine).start(), {
-  actions: (state) => {
-    
-  }
+  actions: (state) => ({
+    double() {
+      send.inc();
+      send.inc();
+    }
+  }),
+  context: (state) => ({
+    double: state.context.count * 2
+  })
 })
 ```

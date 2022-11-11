@@ -1,0 +1,59 @@
+{
+  "name": "xstate-convert",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Convert XState State & Services to custom actions and context",
+  "license": "MIT",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc && vite build",
+    "format": "yarn rome format src --write",
+    "lint": "yarn rome check src --apply-suggested",
+    "xstate-typegen": "yarn xstate typegen \"src/**/*.machine.ts?(x)\" --watch"
+  },
+  "files": [
+    "dist/**",
+    "types/**"
+  ],
+  "main": "./dist/xstate-convert.cjs",
+  "module": "./dist/xstate-convert.js",
+  "types": "./types/index.d.ts",
+  "typings": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/xstate-convert.js",
+      "require": "./dist/xstate-convert.cjs"
+    },
+    "./dist/*": "./dist/*"
+  },
+  "peerDependencies": {
+    "react": ">=16.8",
+    "xstate": "^4"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "xstate": {
+      "optional": false
+    }
+  },
+  "engines": {
+    "node": "18.12.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "@vitejs/plugin-react": "^2.2.0",
+    "@xstate/cli": "^0.3.3",
+    "@xstate/react": "^3.0.1",
+    "camelcase": "^7.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rome": "^10.0.1",
+    "typescript": "^4.8.4",
+    "vite": "^3.2.3",
+    "xstate": "^4.34.0"
+  },
+  "packageManager": "yarn@3.2.4"
+}

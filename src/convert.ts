@@ -1,8 +1,7 @@
-import type { AnyInterpreter, StateSchema, Typestate } from 'xstate';
+import type { AnyInterpreter, AnyStateMachine, InterpreterFrom, StateFrom, StateSchema, Typestate, State as XState } from 'xstate';
 import type { ConvertedActions } from './convertActions';
 import { convertActions } from './convertActions';
 import { convertState } from './convertState';
-import { State as XState } from 'xstate';
 
 export type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
 
@@ -11,14 +10,29 @@ export type DefaultContextOverride<Service extends AnyInterpreter, State extends
 > &
 	Record<PropertyKey, unknown>;
 
-export type DefaultActionsOverride<Service extends AnyInterpreter, State extends Service['state']> = Expand<
-	Partial<ConvertedActions<State['event']>> & Record<PropertyKey, (...args: any) => any>
+export type DefaultActionsOverride = Record<PropertyKey, (...args: any[]) => unknown>;
+
+export type ConvertMachine<
+	Machine extends AnyStateMachine,
+	Overrides extends {
+		context?: DefaultContextOverride<InterpreterFrom<Machine>, State>;
+		actions?: DefaultActionsOverride;
+	} = {
+		context?: DefaultContextOverride<InterpreterFrom<Machine>, StateFrom<Machine>>;
+		actions?: DefaultActionsOverride;
+	},
+	State extends StateFrom<Machine> = StateFrom<Machine>,
+> = Expand<
+	State['context'] &
+		Overrides['context'] &
+		Overrides['actions'] &
+		Omit<ConvertedActions<State['event']>, keyof Overrides['actions']>
 >;
 export type ConvertedService<
 	Service extends AnyInterpreter,
 	State extends Service['state'],
 	OverrideContext extends DefaultContextOverride<Service, State>,
-	OverrideActions extends DefaultActionsOverride<Service, State>,
+	OverrideActions extends DefaultActionsOverride,
 > = [
 	XState<
 		Expand<State['context'] & OverrideContext>,
@@ -35,7 +49,7 @@ export type Overrides<
 	Service extends AnyInterpreter,
 	State extends Service['state'],
 	OverrideContext extends DefaultContextOverride<Service, State>,
-	OverrideActions extends DefaultActionsOverride<Service, State>,
+	OverrideActions extends DefaultActionsOverride,
 > = {
 	context?: (state: State) => OverrideContext;
 	actions?: (state: State, send: Service['send']) => OverrideActions;
@@ -50,7 +64,7 @@ export const convert = <
 	Service extends AnyInterpreter,
 	State extends Service['state'],
 	OverrideContext extends DefaultContextOverride<Service, State>,
-	OverrideActions extends DefaultActionsOverride<Service, State>,
+	OverrideActions extends DefaultActionsOverride,
 >(
 	initial: [State, Service['send'], Service] | Service,
 	overrides?: Overrides<Service, Service['state'] | State, OverrideContext, OverrideActions>,

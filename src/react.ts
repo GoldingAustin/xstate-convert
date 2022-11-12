@@ -9,7 +9,7 @@ export function useXstateConvert<
 	Service extends AnyInterpreter,
 	State extends Service['state'],
 	OverrideContext extends DefaultContextOverride<Service, State>,
-	OverrideActions extends DefaultActionsOverride<Service, State>,
+	OverrideActions extends DefaultActionsOverride,
 >(
 	initial: [State, Service['send'], Service] | (Service & { state: State }),
 	overrides?: Overrides<Service, Service['state'] | State, OverrideContext, OverrideActions>,

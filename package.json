@@ -1,6 +1,6 @@
 {
   "name": "xstate-convert",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "description": "Convert XState State & Services to custom actions and context",
   "license": "MIT",

@@ -1,6 +1,6 @@
 import type { AnyInterpreter, EventObject, StateNode } from 'xstate';
 import camelcase from 'camelcase';
-import type { Expand } from './convert';
+import type { DefaultActionsOverride, Expand } from './convert';
 
 type StringToCamelCase<S extends string> = S extends `${infer T}_${infer U}`
 	? `${Lowercase<T>}${Capitalize<StringToCamelCase<U>>}`
@@ -11,21 +11,15 @@ type StringToCamelCase<S extends string> = S extends `${infer T}_${infer U}`
 	: Lowercase<S>;
 
 export type ConvertedActions<Event extends EventObject, KK extends keyof Event = keyof Event> = {
-	[K in Event['type'] as StringToCamelCase<K extends string ? K : string>]: keyof Omit<
-		Extract<Event, Record<KK, K>>,
-		'type'
-	> extends [never]
+	[K in Event['type'] as StringToCamelCase<K>]: keyof Omit<Extract<Event, { type: K }>, 'type'> extends [never]
 		? () => void
-		: (payload: Expand<Omit<Extract<Event, Record<KK, K>>, 'type'>>) => void;
+		: (payload: Expand<Omit<Extract<Event, { type: K }>, 'type'>>) => void;
 };
 
-export const convertActions = <
-	Service extends AnyInterpreter,
-	Overrides extends Record<PropertyKey, unknown | ((...args: any[]) => any)>,
->(
+export const convertActions = <Service extends AnyInterpreter, Overrides extends DefaultActionsOverride>(
 	service: Service,
 	overrides?: Overrides,
-): Omit<ConvertedActions<Service['state']['event']>, keyof Overrides> & Overrides => {
+): Expand<ConvertedActions<Service['state']['event']> & Overrides> => {
 	const mapping: any = { ...overrides } || {};
 	const events = new Set();
 	const getMapping = (state: StateNode) => {
@@ -38,7 +32,7 @@ export const convertActions = <
 						typeof overrides?.[camelEvent] === 'function'
 							? // @ts-ignore
 							  overrides[camelEvent]!(payload)
-							: service.send({ type: event, ...payload });
+							: service.send({ ...(payload || {}), type: event });
 				}
 			}
 		}

@@ -16,7 +16,7 @@ export default defineConfig({
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      external: ['xstate', 'react', 'react-dom'],
+      external: ['xstate', 'react', 'react-dom', 'camelcase'],
     },
   },
 });

@@ -1,4 +1,12 @@
-import type { AnyInterpreter, AnyStateMachine, InterpreterFrom, StateFrom, StateSchema, Typestate, State as XState } from 'xstate';
+import type {
+	AnyInterpreter,
+	AnyStateMachine,
+	InterpreterFrom,
+	StateFrom,
+	StateSchema,
+	Typestate,
+	State as XState,
+} from 'xstate';
 import type { ConvertedActions } from './convertActions';
 import { convertActions } from './convertActions';
 import { convertState } from './convertState';

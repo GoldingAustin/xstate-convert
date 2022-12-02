@@ -18,5 +18,5 @@ export const convertState = <Service extends AnyInterpreter, State extends Servi
 			context[key] = override[key as keyof typeof override];
 		}
 	}
-	return XState.from(state, context);
+	return XState.create({...state, context});
 };
